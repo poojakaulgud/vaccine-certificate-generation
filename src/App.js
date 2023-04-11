@@ -1,5 +1,6 @@
 import logo from './logo.svg';
-import Web3 from 'web3'
+import React, { useState, useEffect } from "react";
+import Web3 from "web3";
 import './App.css';
 
 function App() {
