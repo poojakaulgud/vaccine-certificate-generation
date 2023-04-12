@@ -2,6 +2,8 @@ import './App.css';
 import React, { useState, useEffect } from "react";
 import Web3 from "web3";
 import VaccineCertificate from "./contracts/VaccineCertificate.json";
+import { PDFDownloadLink, Page, Text, View, Document, Image, StyleSheet } from "@react-pdf/renderer";
+// import QRCode from "qr-image";
 
 function App() {
   const [web3, setWeb3] = useState(null);
@@ -14,6 +16,37 @@ function App() {
   const [vaccinationDate, setVaccinationDate] = useState("");
   const [getAadharNumber, setGetAadharNumber] = useState("");
   const [myCertificate, setMyCertificate] = useState(null);
+  const [pdfDownloaded, setPdfDownloaded] = useState(false);
+
+  const styles = StyleSheet.create({
+    page: {
+      flexDirection: 'row',
+      backgroundColor: '#E4E4E4'
+    },
+    section: {
+      margin: 10,
+      padding: 10,
+      flexGrow: 1
+    }
+  });
+
+  const MyCertificatePDF = ({name, aadharNumber, dateOfBirth, vaccinationDate, vaccineName}) => {
+    // const qrCodeImage = QRCode.imageSync(aadharNumber, { type: "png" });
+    return (
+      <Document>
+        <Page size="A4" style={styles.page}>
+          <View style={styles.section}>
+            <Text>Name: {name}</Text>
+            <Text>Aadhar Number: {aadharNumber}</Text>
+            <Text>Date of Birth: {dateOfBirth}</Text>
+            <Text>Vaccination Date: {vaccinationDate}</Text>
+            <Text>Vaccine Name: {vaccineName}</Text>
+            {/* <Image src={qrCodeImage} /> */}
+          </View>
+        </Page>
+      </Document>
+    );
+  };
 
   useEffect(() => {
     async function loadWeb3() {
@@ -127,13 +160,21 @@ function App() {
         <button type="submit">Get Certificate</button>
       </form>
       {
-        myCertificate != null ?
+        myCertificate != null &&
         <div>
           <p>Name: {myCertificate.name}</p>
           <p>Vaccine Name: {myCertificate.vaccineType}</p>
           <p>Vaccination Date: {myCertificate.vaccineDate}</p>
-        </div> :
-        <div></div>
+          <PDFDownloadLink
+            document={<MyCertificatePDF name={myCertificate.name} aadharNumber={myCertificate.aadhar_number} dateOfBirth={myCertificate.dateOfBirth} vaccinationDate={myCertificate.vaccineDate} vaccineName={myCertificate.vaccineType} />}
+            fileName="MyCertificate.pdf"
+          >
+            {({ blob, url, loading, error }) =>
+              loading ? "Loading document..." : "Download PDF"
+            }
+          </PDFDownloadLink>
+          {pdfDownloaded && <p>PDF has been downloaded.</p>}
+        </div>
       }
     </center>
     </div>
