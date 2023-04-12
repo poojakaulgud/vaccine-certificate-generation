@@ -13,7 +13,7 @@ function App() {
   const [vaccineName, setVaccineName] = useState("");
   const [vaccinationDate, setVaccinationDate] = useState("");
   const [getAadharNumber, setGetAadharNumber] = useState("");
-  const [certificates, setCertificates] = useState([]);
+  const [myCertificate, setMyCertificate] = useState(null);
 
   useEffect(() => {
     async function loadWeb3() {
@@ -52,7 +52,13 @@ function App() {
   async function getMyCertificate(event) {
     event.preventDefault();
     const newCertificate = await certificateContract.methods.getCertificate(getAadharNumber).call();
-    setCertificates([newCertificate]);
+    console.log(newCertificate);
+    if (newCertificate.isIssued == true) {
+      setMyCertificate(newCertificate);
+    } else {
+      setMyCertificate(null);
+      alert("Certificate Not Found")
+    }
   }
 
   return (
@@ -66,6 +72,7 @@ function App() {
             type="text"
             value={name}
             onChange={(event) => setName(event.target.value)}
+            required
           />
         </label><br></br><br></br>
         <label>
@@ -74,6 +81,7 @@ function App() {
             type="text"
             value={aadharNumber}
             onChange={(event) => setAadharNumber(event.target.value)}
+            required
           />
         </label><br></br><br></br>
         <label>
@@ -82,6 +90,7 @@ function App() {
             type="date"
             value={dateOfBirth}
             onChange={(event) => setDateOfBirth(event.target.value)}
+            required
           />
         </label><br></br><br></br>
         <label>
@@ -90,6 +99,7 @@ function App() {
             type="text"
             value={vaccineName}
             onChange={(event) => setVaccineName(event.target.value)}
+            required
           />
         </label><br></br><br></br>
         <label>
@@ -98,6 +108,7 @@ function App() {
             type="date"
             value={vaccinationDate}
             onChange={(event) => setVaccinationDate(event.target.value)}
+            required
           />
         </label><br></br><br></br>
         <button type="submit">Issue Certificate</button>
@@ -110,17 +121,20 @@ function App() {
             type="text"
             value={getAadharNumber}
             onChange={(event) => setGetAadharNumber(event.target.value)}
+            required
           />
         </label><br></br><br></br>
         <button type="submit">Get Certificate</button>
       </form>
-      {certificates.map((certificate, index) => (
-        <div key={index}>
-          <p>Name: {certificate.name}</p>
-          <p>Vaccine Name: {certificate.vaccineType}</p>
-          <p>Vaccination Date: {certificate.vaccineDate}</p>
-        </div>
-      ))}
+      {
+        myCertificate != null ?
+        <div>
+          <p>Name: {myCertificate.name}</p>
+          <p>Vaccine Name: {myCertificate.vaccineType}</p>
+          <p>Vaccination Date: {myCertificate.vaccineDate}</p>
+        </div> :
+        <div></div>
+      }
     </center>
     </div>
   );
