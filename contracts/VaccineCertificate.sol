@@ -4,8 +4,8 @@ contract VaccineCertificate {
     struct Certificate {
         string name;
         string aadhar_number;
-        uint dateOfBirth;
-        uint vaccineDate;
+        string dateOfBirth;
+        string vaccineDate;
         string vaccineType;
         bool isIssued;
     }
@@ -15,7 +15,7 @@ contract VaccineCertificate {
 
     mapping(string => Certificate) certificates;
 
-    function issueCertificate(string memory _name, string memory _aadhar, uint _dateOfBirth, uint _vaccineDate, string memory _vaccineType) public {
+    function issueCertificate(string memory _name, string memory _aadhar, string memory _dateOfBirth, string memory _vaccineDate, string memory _vaccineType) public {
         Certificate memory newCertificate = Certificate(_name, _aadhar, _dateOfBirth, _vaccineDate, _vaccineType, true);
         certificates[_aadhar] = newCertificate;
     }
