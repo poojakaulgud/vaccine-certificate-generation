@@ -31,17 +31,6 @@ function App() {
             networkData.address
           );
           setCertificateContract(contract);
-          const certificateCount = await contract.methods
-            .certificateCount()
-            .call();
-          let certificateList = [];
-          for (let i = 1; i <= certificateCount; i++) {
-            const certificate = await contract.methods
-              .certificates(i)
-              .call();
-            certificateList.push(certificate);
-          }
-          setCertificates(certificateList);
         } else {
           alert("VaccineCertificate contract not deployed to detected network.");
         }
