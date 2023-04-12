@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Web3 from "web3";
 import VaccineCertificate from "./contracts/VaccineCertificate.json";
 import { PDFDownloadLink, Page, Text, View, Document, Image, StyleSheet } from "@react-pdf/renderer";
-// import QRCode from "qr-image";
+import QRCode from "qrcode.react";
 
 function App() {
   const [web3, setWeb3] = useState(null);
@@ -21,17 +21,21 @@ function App() {
   const styles = StyleSheet.create({
     page: {
       flexDirection: 'row',
-      backgroundColor: '#E4E4E4'
+      backgroundColor: '#FFFFFF'
     },
     section: {
       margin: 10,
       padding: 10,
       flexGrow: 1
-    }
+    },
+    image: {
+      padding: 10,
+      width: '25%',
+  },
   });
 
   const MyCertificatePDF = ({name, aadharNumber, dateOfBirth, vaccinationDate, vaccineName}) => {
-    // const qrCodeImage = QRCode.imageSync(aadharNumber, { type: "png" });
+    const qrCodeImage = document.getElementById('myCertificate').toDataURL();
     return (
       <Document>
         <Page size="A4" style={styles.page}>
@@ -41,7 +45,7 @@ function App() {
             <Text>Date of Birth: {dateOfBirth}</Text>
             <Text>Vaccination Date: {vaccinationDate}</Text>
             <Text>Vaccine Name: {vaccineName}</Text>
-            {/* <Image src={qrCodeImage} /> */}
+            <Image src={qrCodeImage} style={styles.image}/>
           </View>
         </Page>
       </Document>
@@ -173,6 +177,11 @@ function App() {
               loading ? "Loading document..." : "Download PDF"
             }
           </PDFDownloadLink>
+          <QRCode
+            value={myCertificate.aadhar_number} 
+            id='myCertificate'
+            style={{display: 'none'}}
+          />
           {pdfDownloaded && <p>PDF has been downloaded.</p>}
         </div>
       }
