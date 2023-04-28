@@ -80,17 +80,32 @@ function App() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    const receipt = await certificateContract.methods
-      .issueCertificate(name, aadharNumber, dateOfBirth, vaccinationDate, vaccineName)
-      .send({ from: account });
-    console.log(receipt);
+    const result = await checkIfCertificateExists();
+    if (result === true) {
+      alert("Certificate already exists for this aadhar number")
+    } else {
+      const receipt = await certificateContract.methods
+        .issueCertificate(name, aadharNumber, dateOfBirth, vaccinationDate, vaccineName)
+        .send({ from: account });
+      console.log(receipt);
+    }
+  }
+
+  async function checkIfCertificateExists() {
+    const newCertificate = await certificateContract.methods.getCertificate(aadharNumber).call();
+    console.log(newCertificate)
+    if (newCertificate.isIssued === true) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   async function getMyCertificate(event) {
     event.preventDefault();
     const newCertificate = await certificateContract.methods.getCertificate(getAadharNumber).call();
     console.log(newCertificate);
-    if (newCertificate.isIssued == true) {
+    if (newCertificate.isIssued === true) {
       setMyCertificate(newCertificate);
     } else {
       setMyCertificate(null);
